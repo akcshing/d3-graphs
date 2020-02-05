@@ -33,15 +33,20 @@ const unflatten = (dependencies, pkg) => {
     console.log(dependenciesArr);
     //reverse dependencies, reduce -> acc = prev nodes,
     // curr node=> prev nodes in dependencies? then add it
+    const checkedDependencies = [`${pkg.name}@${pkg.version}`]
     let treeData = dependenciesArr
         .reverse()
         .reduce((accumulator, currentNode) => {
             if (currentNode.children) {
                 if (currentNode.children.length > 0) {
-                    currentNode.children.forEach((d, i) => {
-                        currentNode.children[i] = dependencies[d];
-                        if (accumulator.includes(dependencies[d])) {
-                            const index = accumulator.indexOf(dependencies[d]);
+                    currentNode.children.forEach((child, i) => {
+                        const pkgKey = `${child.name}@${child.version}`
+                        if (!checkedDependencies.indexOf(pkgKey)) {
+                            checkedDependencies.push(pkgKey)
+                            currentNode.children[i] = dependencies[child];
+                        }
+                        if (accumulator.includes(dependencies[child])) {
+                            const index = accumulator.indexOf(dependencies[child]);
                             if (index > -1) {
                                 accumulator.splice(index, 1);
                             }

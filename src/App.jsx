@@ -8,6 +8,7 @@ import {
 import { ChordGraph } from './chord/graph';
 import { TreeGraph } from './node-tree/nodeTree';
 import { ArcGraph } from './arc/graph';
+import { RadialGraph } from './radialTree/graph';
 import { formatTreeData } from './node-tree/dataFormatter';
 
 import './App.css';
@@ -20,15 +21,17 @@ export const App = () => {
     const fetchData = async () => {
       const { data } = await axios.get(
         // `http://localhost:3001?package=chalk&version=1.1.1`
-        `http://localhost:3001/api/search/?dependency=d&version=1.0.0`
-        // `http://localhost:3001/api/search/?dependency=tool&version=21.0.0`
+        // `http://localhost:3001/api/search/?dependency=d&version=1.0.0`
+        // `http://localhost:3001/api/search/?dependency=koa&version=2.11.0`
+        `http://localhost:3001/api/search/?dependency=tool&version=21.0.0`
+        // `http://localhost:3001/api/search/?dependency=protractor&version=*`
       );
       console.log(data);
       setFetched(true);
       // const formattedData = formatData(data);
-      // const formattedData = formatTreeData(data);
+      const formattedData = formatTreeData(data);
       // const formattedDataParents = formatDataWithParents(data.packages);
-      const formattedData = formatWebDataWithChildren(data);
+      // const formattedData = formatWebDataWithChildren(data);
       // console.log(formattedData);
       setGraphData(formattedData);
     };
@@ -44,7 +47,8 @@ export const App = () => {
       {/* <TreeGraph graphData={graphData} /> */}
       {/* <WebGraph graphData={graphData} /> */}
       {/* <ChordGraph graphData={graphData} /> */}
-      <ArcGraph graphData={graphData} />
+      {/* <ArcGraph graphData={graphData} /> */}
+      <RadialGraph graphData={graphData} />
     </div>
   );
 };
