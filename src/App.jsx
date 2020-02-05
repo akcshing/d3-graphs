@@ -1,21 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// import './App.css';
+import { WebGraph } from './web/graph';
+import {
+  formatWebDataWithChildren,
+  formatWebDataWithParents
+} from './web/dataFormatter';
+import { ChordGraph } from './chord/graph';
+import { TreeGraph } from './node-tree/nodeTree';
+import { ArcGraph } from './arc/graph';
+import { formatTreeData } from './node-tree/dataFormatter';
+
+import './App.css';
 
 export const App = () => {
-  const [beer, setBeer] = useState({});
+  const [graphData, setGraphData] = useState({});
   const [fetched, setFetched] = useState(false);
 
   useEffect(() => {
-    console.log('in use effect');
     const fetchData = async () => {
       const { data } = await axios.get(
-        `https://api.punkapi.com/v2/beers/random`
+        // `http://localhost:3001?package=chalk&version=1.1.1`
+        `http://localhost:3001/api/search/?dependency=d&version=1.0.0`
+        // `http://localhost:3001/api/search/?dependency=tool&version=21.0.0`
       );
-      console.log(JSON.stringify(data));
-
-      setBeer(data[0]);
+      console.log(data);
       setFetched(true);
+      // const formattedData = formatData(data);
+      // const formattedData = formatTreeData(data);
+      // const formattedDataParents = formatDataWithParents(data.packages);
+      const formattedData = formatWebDataWithChildren(data);
+      // console.log(formattedData);
+      setGraphData(formattedData);
     };
 
     if (!fetched) {
@@ -25,54 +40,11 @@ export const App = () => {
 
   return (
     <div className='App'>
-      <header className='App-header'>
-        {Object.keys(beer).length && (
-          <>
-            <img
-              style={{ height: '10rem' }}
-              src={beer.image_url}
-              alt='beer pic'
-            />
-            <p className='App-link'>{beer.name}</p>
-            <Abv abv={beer.abv} />
-          </>
-        )}
-      </header>
+      <header className='App-header'></header>
+      {/* <TreeGraph graphData={graphData} /> */}
+      {/* <WebGraph graphData={graphData} /> */}
+      {/* <ChordGraph graphData={graphData} /> */}
+      <ArcGraph graphData={graphData} />
     </div>
-  );
-};
-
-export const useRandomBeer = () => {
-  const [beer, setBeer] = useState('');
-  const [fetched, setFetched] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await axios.get(
-        `https://api.punkapi.com/v2/beers/random`
-      );
-      console.log(JSON.stringify(data));
-
-      setBeer(data[0]);
-      setFetched(true);
-    };
-
-    if (!fetched) {
-      fetchData();
-    }
-  }, [fetched]);
-
-  return beer;
-};
-
-export const Abv = ({ abv }) => {
-  return abv > 6 ? (
-    <p className='above-6' style={{ fontSize: `${abv / 2}rem` }}>
-      {abv}
-    </p>
-  ) : (
-    <p className='below-6' style={{ fontSize: `${abv / 2}rem` }}>
-      {abv}
-    </p>
   );
 };

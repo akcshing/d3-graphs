@@ -36,7 +36,7 @@ describe('App', () => {
       console.log(rendered.debug());
       expect(rendered.queryByAltText('beer pic')).toBeFalsy();
     });
-
+    console.log(mockAxios.get.mock.calls.length);
     // console.log(rendered.queryByAltText('beer pic'));
     console.log(rendered.debug());
     expect(rendered.queryByAltText('beer pic')).toBeTruthy();
