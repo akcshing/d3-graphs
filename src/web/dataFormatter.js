@@ -38,7 +38,7 @@ export const formatWebDataWithParents = packages => {
     };
 };
 
-export const formatWebDataWithChildren = data => {
+export const formatNetworkData = data => {
     const {
         package: rootPkg,
         dependencies
@@ -46,21 +46,32 @@ export const formatWebDataWithChildren = data => {
     const links = [];
     const nodes = [];
 
-    dependencies[`${rootPkg.name}@${rootPkg.version}`] = rootPkg;
+    nodes.push({
+        id: `${rootPkg.name}@${rootPkg.version}`,
+        depth: 0
+    });
 
+    rootPkg.dependencies.forEach(d => links.push({
+        source: `${rootPkg.name}@${rootPkg.version}`,
+        target: d
+    }))
+    console.log(dependencies)
     for (const pkg in dependencies) {
         nodes.push({
             id: pkg,
             depth: dependencies[pkg].depth
         });
-        if (dependencies[pkg].dependencies) {
-            dependencies[pkg].dependencies.forEach((parent, i) => {
+        if (dependencies[pkg].children) {
+            dependencies[pkg].children.forEach((child, i) => {
+                // console.log(child)
                 links.push({
                     source: pkg,
-                    target: `${dependencies[pkg].dependencies[i]}`
+                    target: child.name ? `${child.name}@${child.version}` : child
+                    // target: `${dependencies[pkg].dependencies[i]}`
                 });
             });
         }
+
     }
     console.log({
         nodes,
